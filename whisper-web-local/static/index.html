@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Whisper Web · Transcrição local</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <main class="layout">
+    <header class="top">
+      <div><div class="eyebrow">TRANSCRIÇÃO LOCAL · CUDA</div><h1>Whisper <span>Web</span></h1>
+        <p>Transcreva arquivos ou fale ao microfone. O áudio permanece neste computador.</p></div>
+      <div id="backend-state" class="pill">Conectando...</div>
+    </header>
+    <div class="columns">
+      <section class="panel settings">
+        <h2>Configurações</h2>
+        <label for="model">Modelo GGML</label><select id="model"></select>
+        <div class="settings-grid">
+          <div><label for="language">Idioma</label><select id="language"><option value="pt">Português</option><option value="auto">Detectar</option><option value="en">Inglês</option><option value="es">Espanhol</option><option value="fr">Francês</option><option value="de">Alemão</option><option value="it">Italiano</option></select></div>
+          <div><label for="temperature">Temperatura</label><input id="temperature" type="number" value="0" min="0" max="1" step="0.1"></div>
+          <div><label for="beam_size">Beam size</label><select id="beam_size"><option value="-1">Padrão (-1)</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="8">8</option></select></div>
+          <div><label for="best_of">Best of</label><input id="best_of" type="number" value="2" min="1" max="8" step="1"></div>
+          <div><label for="no_speech_thold">Limiar sem fala</label><input id="no_speech_thold" type="number" value="0.6" min="0" max="1" step="0.05"></div>
+          <div><label for="chunk_seconds">Janela microfone</label><select id="chunk_seconds"><option value="5">5 segundos</option><option value="8" selected>8 segundos</option><option value="12">12 segundos</option><option value="20">20 segundos</option></select></div>
+        </div>
+        <label for="prompt">Vocabulário de contexto <small>(opcional)</small></label>
+        <textarea id="prompt" rows="3" maxlength="1000" placeholder="Ex.: NetBox, Huawei, pfSense, VLAN, Kea DHCP..."></textarea>
+        <p class="hint">O contexto pode ajudar com nomes e termos técnicos, mas não garante sua grafia.</p>
+      </section>
+      <section class="panel workspace">
+        <div class="tabs" role="tablist" aria-label="Fonte de áudio">
+          <button id="tab-file" class="tab selected" type="button">◫ Arquivo</button>
+          <button id="tab-mic" class="tab" type="button">◉ Microfone</button>
+        </div>
+        <div id="file-area">
+          <h2>Transcrever arquivo</h2>
+          <input id="audio-file" type="file" accept=".mp3,.mp4,.wav,.m4a,.ogg,.opus,.webm,.flac,.aac,.wma,.mkv,audio/*,video/mp4">
+          <p class="hint">MP3, WAV, M4A, OGG, FLAC e outros via FFmpeg (até 300 MB).</p>
+          <button id="transcribe-file" class="primary" type="button">Transcrever arquivo</button>
+        </div>
+        <div id="mic-area" hidden>
+          <h2>Transcrição do microfone</h2>
+          <p class="hint">Capture diretamente pelo navegador. O texto será acrescentado a cada janela de áudio. Requer localhost ou HTTPS.</p>
+          <div class="mic-actions">
+            <button id="start-mic" class="primary" type="button">Iniciar gravação</button>
+            <button id="stop-mic" class="danger" type="button" disabled>Parar</button>
+            <span id="record-indicator" class="record-indicator" hidden>● Gravando</span>
+          </div>
+          <p class="hint">Os blocos não se sobrepõem; palavras cortadas na fronteira podem perder precisão. O último bloco é enviado ao parar.</p>
+        </div>
+        <div id="status" class="status" aria-live="polite">Pronto para transcrever.</div>
+        <div class="result-heading"><h2>Transcrição</h2><span id="stats"></span></div>
+        <textarea id="result" class="result" placeholder="A transcrição aparecerá aqui..." spellcheck="true"></textarea>
+        <div class="toolbar">
+          <button id="copy" type="button">Copiar</button>
+          <button id="save-txt" type="button">Salvar TXT</button>
+          <button id="save-srt" type="button">Salvar SRT</button>
+          <button id="clear" type="button">Limpar</button>
+        </div>
+      </section>
+    </div>
+    <footer>100% local · FastAPI + whisper.cpp · Para uso pessoal no computador</footer>
+  </main>
+</body>
+</html>
